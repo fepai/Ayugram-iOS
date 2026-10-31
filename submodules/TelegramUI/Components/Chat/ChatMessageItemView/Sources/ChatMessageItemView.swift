@@ -710,7 +710,22 @@ open class ChatMessageItemView: ListViewItemNode, ChatMessageItemNodeProtocol {
         }
         self.wasFilteredKeywordTested = true
         if self.matchedFilterKeyword == nil {
-            let dimmed = AyuGramSettings.shared.extra.dimDeletedMessages && item.message.ayuHistory?.deletedAt != nil
+            let extra = AyuGramSettings.shared.extra
+            // AyuGram: regex message filters and blocked users are hidden completely.
+            if AyuGramFilters.shared.matches(item.message.text) {
+                self.alpha = 0.0
+                self.ayuDimmed = false
+                return
+            }
+            if extra.hideBlockedMessages {
+                AyuBlockedPeers.shared.attach(postbox: item.context.account.postbox)
+                if AyuBlockedPeers.shared.isBlocked(item.message.author?.id) {
+                    self.alpha = 0.0
+                    self.ayuDimmed = false
+                    return
+                }
+            }
+            let dimmed = extra.dimDeletedMessages && item.message.ayuHistory?.deletedAt != nil
             if dimmed {
                 self.alpha = 0.5
             } else if self.ayuDimmed {

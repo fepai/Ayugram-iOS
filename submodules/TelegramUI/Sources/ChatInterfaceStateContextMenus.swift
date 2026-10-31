@@ -1088,6 +1088,35 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                 let _ = enqueueMessages(account: context.account, peerId: message.id.peerId, messages: [.forward(source: message.id, threadId: chatPresentationInterfaceState.chatLocation.threadId, grouping: .auto, attributes: attributes, correlationId: nil)]).startStandalone()
             })))
         }
+        // AyuGram Android parity: Copy ID (message and peer ids).
+        if messages.count == 1, message.id.namespace == Namespaces.Message.Cloud {
+            actions.append(.action(ContextMenuActionItem(text: i18n("Ayu.CopyId", chatPresentationInterfaceState.strings.baseLanguageCode), icon: { theme in
+                generateTintedImage(image: UIImage(systemName: "number"), color: theme.actionSheet.primaryTextColor)
+            }, action: { _, f in
+                f(.default)
+                let data = context.sharedContext.currentPresentationData.with { $0 }
+                let locale = data.strings.baseLanguageCode
+                let peerIdText = "\(message.id.peerId.toInt64())"
+                let messageIdText = "\(message.id.peerId.toInt64())_\(message.id.id)"
+                let sheet = ActionSheetController(presentationData: data)
+                sheet.setItemGroups([
+                    ActionSheetItemGroup(items: [
+                        ActionSheetButtonItem(title: i18n("Ayu.CopyMessageId", locale) + "  \(messageIdText)", color: .accent, action: { [weak sheet] in
+                            sheet?.dismissAnimated()
+                            UIPasteboard.general.string = messageIdText
+                        }),
+                        ActionSheetButtonItem(title: i18n("Ayu.CopyPeerId", locale) + "  \(peerIdText)", color: .accent, action: { [weak sheet] in
+                            sheet?.dismissAnimated()
+                            UIPasteboard.general.string = peerIdText
+                        })
+                    ]),
+                    ActionSheetItemGroup(items: [
+                        ActionSheetButtonItem(title: data.strings.Common_Cancel, color: .accent, action: { [weak sheet] in sheet?.dismissAnimated() })
+                    ])
+                ])
+                controllerInteraction.presentControllerInCurrent(sheet, nil)
+            })))
+        }
         var sgActions: [ContextMenuItem] = []
 
         var isPinnedMessages = false

@@ -75,7 +75,15 @@ private final class AccountPresenceManagerImpl {
             timer.start()
             let privacy = AyuGramSettings.shared.snapshot
             Logger.shared.log("AyuGhost", "updateStatus online ghost=\(privacy.ghostMode) online=\(privacy.suppressOnline)")
-            request = self.network.request(Api.functions.account.updateStatus(offline: .boolFalse))
+            var onlineRequest = self.network.request(Api.functions.account.updateStatus(offline: .boolFalse))
+            // AyuGram "Immediate offline after online": report offline right after
+            // every online report, so the account only blinks online.
+            if AyuGramSettings.shared.extra.offlineAfterOnline {
+                onlineRequest = onlineRequest |> mapToSignal { _ -> Signal<Api.Bool, MTRpcError> in
+                    return self.network.request(Api.functions.account.updateStatus(offline: .boolTrue))
+                }
+            }
+            request = onlineRequest
         } else {
             self.onlineTimer?.invalidate()
             self.onlineTimer = nil

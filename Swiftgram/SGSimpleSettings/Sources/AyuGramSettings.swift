@@ -179,6 +179,21 @@ public struct AyuGramExtraSettings: Codable, Equatable {
     public var confirmStickers = false
     public var confirmGifs = false
     public var confirmReadReceipt = true
+    // Android parity: customization, saving preferences and feed options.
+    /// Emoji or text shown before messages that were deleted but kept locally.
+    public var deletedMark: String = "🧹"
+    /// Custom label shown instead of "Edited" before the edit timestamp. Empty keeps the native label.
+    public var editedMark: String = ""
+    /// Completely hide messages written by blocked users.
+    public var hideBlockedMessages = false
+    /// Android "Immediate offline after online": report offline right after every online report.
+    public var offlineAfterOnline = false
+    /// Message Saving Preferences: which chat types keep deleted and edited messages.
+    public var saveInPrivateChats = true
+    public var saveInPublicGroups = true
+    public var saveInPrivateGroups = true
+    public var saveInPublicChannels = true
+    public var saveInPrivateChannels = true
 
     public var sendsSilently: Bool {
         return silentSending == 2 || (silentSending == 1 && AyuGramSettings.shared.snapshot.ghostMode)
@@ -204,6 +219,15 @@ public struct AyuGramExtraSettings: Codable, Equatable {
         self.confirmStickers = try container.decodeIfPresent(Bool.self, forKey: .confirmStickers) ?? defaults.confirmStickers
         self.confirmGifs = try container.decodeIfPresent(Bool.self, forKey: .confirmGifs) ?? defaults.confirmGifs
         self.confirmReadReceipt = try container.decodeIfPresent(Bool.self, forKey: .confirmReadReceipt) ?? defaults.confirmReadReceipt
+        self.deletedMark = try container.decodeIfPresent(String.self, forKey: .deletedMark) ?? defaults.deletedMark
+        self.editedMark = try container.decodeIfPresent(String.self, forKey: .editedMark) ?? defaults.editedMark
+        self.hideBlockedMessages = try container.decodeIfPresent(Bool.self, forKey: .hideBlockedMessages) ?? defaults.hideBlockedMessages
+        self.offlineAfterOnline = try container.decodeIfPresent(Bool.self, forKey: .offlineAfterOnline) ?? defaults.offlineAfterOnline
+        self.saveInPrivateChats = try container.decodeIfPresent(Bool.self, forKey: .saveInPrivateChats) ?? defaults.saveInPrivateChats
+        self.saveInPublicGroups = try container.decodeIfPresent(Bool.self, forKey: .saveInPublicGroups) ?? defaults.saveInPublicGroups
+        self.saveInPrivateGroups = try container.decodeIfPresent(Bool.self, forKey: .saveInPrivateGroups) ?? defaults.saveInPrivateGroups
+        self.saveInPublicChannels = try container.decodeIfPresent(Bool.self, forKey: .saveInPublicChannels) ?? defaults.saveInPublicChannels
+        self.saveInPrivateChannels = try container.decodeIfPresent(Bool.self, forKey: .saveInPrivateChannels) ?? defaults.saveInPrivateChannels
     }
 }
 

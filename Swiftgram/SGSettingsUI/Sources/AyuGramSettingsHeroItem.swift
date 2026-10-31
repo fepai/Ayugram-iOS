@@ -45,6 +45,43 @@ enum AyuGramRowColor {
     static let gray = UIColor(red: 0.56, green: 0.56, blue: 0.58, alpha: 1.0)
 }
 
+/// Custom red trash glyph for the destructive "Clear Ayu Database" row, drawn
+/// in the AyuGram Android style: red icon next to red text.
+func ayuGramTrashIcon(size: CGFloat = 29.0) -> UIImage {
+    let red = AyuGramRowColor.red
+    return UIGraphicsImageRenderer(size: CGSize(width: size, height: size)).image { context in
+        let cg = context.cgContext
+        let scale = size / 29.0
+        cg.translateBy(x: 0.0, y: size)
+        cg.scaleBy(x: scale, y: -scale)
+        red.setFill()
+
+        // Handle and lid.
+        cg.addPath(CGPath(roundedRect: CGRect(x: 10.1, y: 21.0, width: 8.8, height: 1.7), cornerWidth: 0.85, cornerHeight: 0.85, transform: nil))
+        cg.fillPath()
+        cg.addPath(CGPath(roundedRect: CGRect(x: 4.6, y: 18.9, width: 19.8, height: 1.8), cornerWidth: 0.9, cornerHeight: 0.9, transform: nil))
+        cg.fillPath()
+
+        // Tapered body with three slots cut out (even-odd fill).
+        let body = CGMutablePath()
+        body.move(to: CGPoint(x: 6.2, y: 18.3))
+        body.addLine(to: CGPoint(x: 22.8, y: 18.3))
+        body.addLine(to: CGPoint(x: 21.0, y: 6.6))
+        body.addLine(to: CGPoint(x: 8.0, y: 6.6))
+        body.closeSubpath()
+        let slotHalf: CGFloat = 0.7
+        for centerX in [11.0, 14.5, 18.0] {
+            body.move(to: CGPoint(x: centerX - slotHalf, y: 15.6))
+            body.addLine(to: CGPoint(x: centerX + slotHalf, y: 15.6))
+            body.addLine(to: CGPoint(x: centerX + slotHalf, y: 8.9))
+            body.addLine(to: CGPoint(x: centerX - slotHalf, y: 8.9))
+            body.closeSubpath()
+        }
+        cg.addPath(body)
+        cg.fillPath(using: .evenOdd)
+    }
+}
+
 /// Summary card at the top of the AyuGram screen: brand, Ghost Mode state
 /// and how many activity signals are currently hidden.
 final class AyuGramSettingsHeroItem: ListViewItem, ItemListItem {

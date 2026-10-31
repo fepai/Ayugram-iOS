@@ -1,4 +1,5 @@
 import Foundation
+import SGSimpleSettings
 import TelegramCore
 import TelegramPresentationData
 import TelegramUIPreferences
@@ -251,6 +252,10 @@ public func stringForMessageTimestampStatus(
         }
     }
     
-    if message._asMessage().ayuHistory?.deletedAt != nil { dateText = "🗑︎ " + dateText }
+    if message._asMessage().ayuHistory?.deletedAt != nil {
+        // AyuGram: customizable deleted mark, Android default 🧹.
+        let mark = AyuGramSettings.shared.extra.deletedMark.trimmingCharacters(in: .whitespacesAndNewlines)
+        dateText = (mark.isEmpty ? "🧹" : mark) + " " + dateText
+    }
     return dateText
 }

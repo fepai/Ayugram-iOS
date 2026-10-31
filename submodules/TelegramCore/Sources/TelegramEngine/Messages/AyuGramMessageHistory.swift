@@ -126,6 +126,43 @@ func ayuGramIsHistoryCandidate(transaction: Transaction, id: MessageId) -> Bool 
     guard id.namespace == Namespaces.Message.Cloud, id.peerId.namespace != Namespaces.Peer.SecretChat,
           let message = transaction.getMessage(id), !message.isCopyProtected(), !message.containsSecretMedia,
           !message.attributes.contains(where: { $0 is AutoremoveTimeoutMessageAttribute || $0 is AutoclearTimeoutMessageAttribute }) else { return false }
+    // AyuGram Message Saving Preferences: which chat types keep deleted and
+    // edited messages at all (Android parity). Everything is enabled by default.
+    if let peer = transaction.getPeer(id.peerId) {
+        let extra = AyuGramSettings.shared.extra
+        switch peer {
+        case is TelegramUser:
+            if !extra.saveInPrivateChats {
+                return false
+            }
+        case let channel as TelegramChannel:
+            switch channel.info {
+            case .broadcast:
+                if channel.username != nil, !extra.saveInPublicChannels {
+                    return false
+                }
+                if channel.username == nil, !extra.saveInPrivateChannels {
+                    return false
+                }
+            case .group:
+                if channel.username != nil, !extra.saveInPublicGroups {
+                    return false
+                }
+                if channel.username == nil, !extra.saveInPrivateGroups {
+                    return false
+                }
+            }
+        case let group as TelegramGroup:
+            if group.username != nil, !extra.saveInPublicGroups {
+                return false
+            }
+            if group.username == nil, !extra.saveInPrivateGroups {
+                return false
+            }
+        default:
+            break
+        }
+    }
     return !message.text.isEmpty || !message.media.isEmpty
 }
 
