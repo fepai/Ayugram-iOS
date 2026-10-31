@@ -376,7 +376,11 @@ public final class AccountViewTracker {
     init(account: Account) {
         self.account = account
         self.accountPeerId = account.peerId
-        
+
+        // AyuGram: cache blocked-message authors for the chat renderer (no
+        // postbox access from UI files; see AllowedPostboxAccess policy).
+        AyuBlockedPeers.shared.attach(postbox: account.postbox)
+
         self.historyViewStateValidationContexts = HistoryViewStateValidationContexts(queue: self.queue, postbox: account.postbox, network: account.network, accountPeerId: account.peerId)
         
         self.chatHistoryPreloadManager = ChatHistoryPreloadManager(postbox: account.postbox, network: account.network, accountPeerId: account.peerId, networkState: account.networkState, preloadItemsSignal: self.chatListPreloadItems.get() |> distinctUntilChanged |> map { Array($0) })

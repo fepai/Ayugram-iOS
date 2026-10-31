@@ -718,7 +718,6 @@ open class ChatMessageItemView: ListViewItemNode, ChatMessageItemNodeProtocol {
                 return
             }
             if extra.hideBlockedMessages {
-                AyuBlockedPeers.shared.attach(postbox: item.context.account.postbox)
                 if AyuBlockedPeers.shared.isBlocked(item.message.author?.id) {
                     self.alpha = 0.0
                     self.ayuDimmed = false

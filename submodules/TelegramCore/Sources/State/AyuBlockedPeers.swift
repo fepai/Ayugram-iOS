@@ -15,10 +15,14 @@ public final class AyuBlockedPeers {
     private var pending: Set<Int64> = []
     private weak var postbox: Postbox?
 
+    /// Called when an account becomes active. Blocked state is per-account, so
+    /// switching to another account's postbox drops the cached answers.
     public func attach(postbox: Postbox) {
         lock.lock()
-        if self.postbox == nil {
+        if self.postbox !== postbox {
             self.postbox = postbox
+            known.removeAll()
+            pending.removeAll()
         }
         lock.unlock()
     }
