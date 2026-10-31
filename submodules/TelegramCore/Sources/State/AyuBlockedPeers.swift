@@ -1,7 +1,6 @@
 import Foundation
 import Postbox
 import SwiftSignalKit
-import SyncCore
 
 /// Cached "is blocked" answers for message authors, used by the chat renderer
 /// when "Hide blocked users" is on. Unknown authors are resolved with an async
