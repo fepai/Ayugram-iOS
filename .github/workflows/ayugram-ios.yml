@@ -1,4 +1,6 @@
 name: AyuGram iOS
+# Fork build: the runner is taken from the AYUGRAM_RUNNER repository
+# variable (set to macos-15 on this fork); api_id/hash come from secrets.
 
 on:
   workflow_dispatch:
