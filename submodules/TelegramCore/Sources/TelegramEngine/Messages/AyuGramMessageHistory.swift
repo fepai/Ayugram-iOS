@@ -153,10 +153,8 @@ func ayuGramIsHistoryCandidate(transaction: Transaction, id: MessageId) -> Bool 
                 }
             }
         case let group as TelegramGroup:
-            if group.username != nil, !extra.saveInPublicGroups {
-                return false
-            }
-            if group.username == nil, !extra.saveInPrivateGroups {
+            // Basic groups cannot be public; public supergroups arrive as TelegramChannel.
+            if !extra.saveInPrivateGroups {
                 return false
             }
         default:
