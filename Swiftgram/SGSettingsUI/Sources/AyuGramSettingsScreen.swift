@@ -25,7 +25,7 @@ private enum AyuScreenToggle: Equatable {
 }
 
 private enum AyuScreenLink: Equatable {
-    case history, savingPreferences, filters, deletedMark, editedMark, appearance, update, checkUpdates, channel, developer, bark, importChat, silentSending
+    case history, savingPreferences, filters, deletedMark, editedMark, appearance, importChat, silentSending
 }
 
 private enum AyuScreenTint: Equatable {
@@ -109,8 +109,7 @@ private enum AyuScreenEntry: ItemListNodeEntry {
                 arguments.toggle(key, value)
             })
         case let .link(_, _, link, symbol, tint, title, label):
-            let icon = (link == .channel ? ayuGramRowImage("AyuUpdatesChannel") : nil) ?? ayuGramRowIcon(symbol, color: tint.color)
-            return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, icon: icon, title: title, label: label, sectionId: self.section, style: .blocks, action: {
+            return ItemListDisclosureItem(presentationData: presentationData, systemStyle: .glass, icon: ayuGramRowIcon(symbol, color: tint.color), title: title, label: label, sectionId: self.section, style: .blocks, action: {
                 arguments.open(link)
             })
         case let .pins(_, _, value):
@@ -144,7 +143,7 @@ private func ayuGramArchiveSize(mediaBox: MediaBox) -> String {
     return ByteCountFormatter.string(fromByteCount: total, countStyle: .file)
 }
 
-private func ayuScreenEntries(data: PresentationData, privacy: AyuGramPrivacySettings, extra: AyuGramExtraSettings, client: AyuGramClientSettings, hasAppearance: Bool, update: AyuGramUpdateInfo?, archiveSize: String) -> [AyuScreenEntry] {
+private func ayuScreenEntries(data: PresentationData, privacy: AyuGramPrivacySettings, extra: AyuGramExtraSettings, client: AyuGramClientSettings, hasAppearance: Bool, archiveSize: String) -> [AyuScreenEntry] {
     let locale = data.strings.baseLanguageCode
     func s(_ key: String) -> String {
         return i18n(key, locale)
@@ -155,9 +154,6 @@ private func ayuScreenEntries(data: PresentationData, privacy: AyuGramPrivacySet
     let hidden = [privacy.suppressRead, privacy.suppressOnline, privacy.suppressTyping, privacy.suppressRecording, privacy.suppressUploading, privacy.suppressStoryViews]
     let hiddenCount = hidden.filter { $0 }.count
     entries.append(.hero(id: 0, title: "AyuGram", status: s(ghost ? "Ayu.HeroGhostOn" : "Ayu.HeroGhostOff"), detail: i18n("Ayu.HeroHidden", locale, "\(hiddenCount)", "\(hidden.count)"), active: ghost || hiddenCount > 0))
-    if let update {
-        entries.append(.link(id: 50, section: .support, link: .update, symbol: "arrow.down.circle.fill", tint: .green, title: s("Ayu.UpdateAvailable") + " · " + update.version, label: ""))
-    }
 
     // Ghost essentials (AyuGram Android: the collapsible Ghost Mode block).
     entries.append(.header(id: 100, section: .ghost, text: s("Ayu.GhostEssentials")))
@@ -199,8 +195,6 @@ private func ayuScreenEntries(data: PresentationData, privacy: AyuGramPrivacySet
     entries.append(.header(id: 400, section: .useful, text: s("Ayu.UsefulSection")))
     let filterCount = AyuGramFilters.shared.activeCount
     entries.append(.link(id: 410, section: .useful, link: .filters, symbol: "line.3.horizontal.decrease.circle.fill", tint: .teal, title: s("Ayu.FiltersTitle"), label: filterCount > 0 ? i18n("Ayu.FiltersCount", locale, "\(filterCount)") : s("Ayu.FilterOff")))
-    let barkOn = !(AyuGramPushRelay.barkKey ?? "").isEmpty
-    entries.append(.link(id: 420, section: .useful, link: .bark, symbol: "bell.badge.fill", tint: .red, title: s(barkOn ? "Ayu.BarkConnected" : "Ayu.BarkSetUp"), label: ""))
     entries.append(.toggle(id: 430, section: .useful, key: .premium, symbol: "star.fill", tint: .purple, title: s("Ayu.LocalPremium"), subtitle: s("Ayu.LocalPremiumInfo"), value: client.localPremium, enabled: true))
 
     // Customization (AyuGram Android section).
@@ -224,12 +218,6 @@ private func ayuScreenEntries(data: PresentationData, privacy: AyuGramPrivacySet
     entries.append(.header(id: 800, section: .client, text: s("Ayu.ClientSection")))
     entries.append(.pins(id: 810, section: .client, value: client.pinnedChatLimit))
     entries.append(.footer(id: 820, section: .client, text: s("Ayu.PinsFooter")))
-
-    // Support.
-    entries.append(.header(id: 900, section: .support, text: s("Ayu.SupportSection")))
-    entries.append(.link(id: 910, section: .support, link: .channel, symbol: "paperplane.fill", tint: .blue, title: s("Ayu.SupportChannel"), label: ""))
-    entries.append(.link(id: 920, section: .support, link: .developer, symbol: "person.crop.circle.fill", tint: .purple, title: s("Ayu.SupportDeveloper"), label: ""))
-    entries.append(.link(id: 930, section: .support, link: .checkUpdates, symbol: "arrow.triangle.2.circlepath", tint: .gray, title: s("Ayu.CheckUpdates"), label: ""))
 
     // Database (AyuGram Android: the red rows with the trash icon at the bottom).
     entries.append(.destructive(id: 960, section: .database, title: s("Ayu.ClearDatabase"), label: archiveSize))
@@ -289,27 +277,6 @@ public func ayuGramSettingsScreen(context: AccountContext) -> ViewController {
             if let controller = ayuGramAppearanceEntryController(context: context) {
                 pushController?(controller)
             }
-        case .update:
-            if let info = AyuGramUpdates.shared.availableUpdate {
-                presentController?(ayuGramUpdateAlert(context: context, info: info))
-            }
-        case .checkUpdates:
-            AyuGramUpdates.shared.check { info in
-                if let info {
-                    presentController?(ayuGramUpdateAlert(context: context, info: info))
-                } else {
-                    let data = context.sharedContext.currentPresentationData.with { $0 }
-                    presentController?(textAlertController(context: context, title: nil, text: i18n("Ayu.UpToDate", data.strings.baseLanguageCode), actions: [TextAlertAction(type: .defaultAction, title: data.strings.Common_OK, action: {})]))
-                }
-            }
-        case .channel:
-            ayuGramOpenLink(context: context, url: AyuGramUpdates.channelURL)
-        case .developer:
-            ayuGramOpenDeveloper(context: context)
-        case .bark:
-            ayuGramSetUpBark(context: context, present: { controller in
-                presentController?(controller)
-            })
         case .importChat:
             ayuGramImportChat(context: context)
         case .silentSending:
@@ -350,7 +317,7 @@ public func ayuGramSettingsScreen(context: AccountContext) -> ViewController {
     |> deliverOnMainQueue
     |> map { data, _ -> (ItemListControllerState, (ItemListNodeState, AyuScreenArguments)) in
         let settings = AyuGramSettings.shared
-        let entries = ayuScreenEntries(data: data, privacy: settings.snapshot, extra: settings.extra, client: settings.client, hasAppearance: hasAppearance, update: AyuGramUpdates.shared.availableUpdate, archiveSize: ayuGramArchiveSize(mediaBox: context.account.postbox.mediaBox))
+        let entries = ayuScreenEntries(data: data, privacy: settings.snapshot, extra: settings.extra, client: settings.client, hasAppearance: hasAppearance, archiveSize: ayuGramArchiveSize(mediaBox: context.account.postbox.mediaBox))
         let state = ItemListControllerState(presentationData: ItemListPresentationData(data), title: .text("AyuGram"), leftNavigationButton: nil, rightNavigationButton: nil, backNavigationButton: ItemListBackButton(title: data.strings.Common_Back))
         let listState = ItemListNodeState(presentationData: ItemListPresentationData(data), entries: entries, style: .blocks, animateChanges: true)
         return (state, (listState, arguments))

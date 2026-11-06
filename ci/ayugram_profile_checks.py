@@ -19,11 +19,3 @@ def check_shared_profiles(source: Path, ci: Path):
     subprocess.run(['xcrun', 'swiftc', '-swift-version', '5', '-warnings-as-errors', '-target', 'arm64-apple-ios' + minimum, '-sdk', sdk,
                     '-parse-as-library', '-typecheck', badges], check=True)
     print('Local badges checked with real Foundation and the minimum iOS SDK', flush=True)
-    updates = source / 'Swiftgram/SGSimpleSettings/Sources/AyuGramUpdates.swift'
-    update_tests = ci / 'tests/AyuGramUpdatesTests.swift'
-    update_binary = output / 'update-tests'
-    subprocess.run(['xcrun', 'swiftc', '-swift-version', '5', '-warnings-as-errors', updates, update_tests, '-o', update_binary], check=True)
-    subprocess.run([update_binary], check=True, timeout=40)
-    subprocess.run(['xcrun', 'swiftc', '-swift-version', '5', '-warnings-as-errors', '-target', 'arm64-apple-ios' + minimum, '-sdk', sdk,
-                    '-parse-as-library', '-typecheck', updates], check=True)
-    print('Update manifest parsing checked', flush=True)

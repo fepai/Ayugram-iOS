@@ -1,16 +1,15 @@
 # AyuGram for iOS
 
-Unofficial, open-source Telegram client for iOS built on [Swiftgram](https://github.com/Swiftgram/Telegram-iOS), which is itself based on [Telegram for iOS](https://github.com/TelegramMessenger/Telegram-iOS).
-
-Updates: [t.me/ayugramiosupdates](https://t.me/ayugramiosupdates)
+An independent Telegram client for iOS built on [Swiftgram](https://github.com/Swiftgram/Telegram-iOS), which is itself based on [Telegram for iOS](https://github.com/TelegramMessenger/Telegram-iOS).
 
 ## Features
 
 - **Ghost mode** — hide read receipts, online status, typing, recording and story views, separately or all at once.
 - **Message history** — keep deleted and edited messages from chosen chats on your device, with photos, videos, voice and round messages; save voice messages as M4A.
 - **Content** — save and forward from restricted chats, allow screenshots.
-- **Appearance** — themes, backgrounds and video wallpapers (Custom build).
-- **Update notice** — tells you when a newer build is published and opens the channel.
+- **Message filters** — regex rules that hide matching messages from chats.
+- **Appearance** — alternate app icons, app badge styles, customizable deleted and edited marks, snow effect.
+- **Plugins** — install JavaScript plugins from files, with commands, message hooks and per-plugin settings.
 
 Everything AyuGram stores stays on the device. The only request it makes on its own is downloading `update.json` from this repository to check for updates.
 

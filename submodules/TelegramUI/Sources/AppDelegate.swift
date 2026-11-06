@@ -1491,8 +1491,6 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                         print("Application: context took \(readyTime) to become ready")
                     }
                     print("Launch to ready took \((CFAbsoluteTimeGetCurrent() - launchStartTime) * 1000.0) ms")
-                    // AyuGram: offer a newer build once the interface is up.
-                    ayuGramPresentUpdateIfNeeded(context: context.context)
 
                     self.mainWindow.debugAction = nil
                     self.mainWindow.viewController = context.rootController
@@ -2745,32 +2743,6 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
             }
         }
         |> deliverOnMainQueue).start(next: { sharedContext, context, authContext in
-            // AyuGram: Bark notifications open the app with this scheme; ayugram://chat?user=ID
-            // (or chat=ID, channel=ID) also opens that chat.
-            if url.scheme?.lowercased() == "ayugram" {
-                if url.host == "chat", let context, let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems {
-                    var peerId: PeerId?
-                    for item in items {
-                        guard let value = item.value.flatMap({ Int64($0) }) else {
-                            continue
-                        }
-                        switch item.name {
-                        case "user":
-                            peerId = PeerId(namespace: Namespaces.Peer.CloudUser, id: PeerId.Id._internalFromInt64Value(value))
-                        case "chat":
-                            peerId = PeerId(namespace: Namespaces.Peer.CloudGroup, id: PeerId.Id._internalFromInt64Value(value))
-                        case "channel":
-                            peerId = PeerId(namespace: Namespaces.Peer.CloudChannel, id: PeerId.Id._internalFromInt64Value(value))
-                        default:
-                            break
-                        }
-                    }
-                    if let peerId {
-                        context.context.sharedContext.navigateToChat(accountId: context.context.account.id, peerId: peerId, messageId: nil)
-                    }
-                }
-                return
-            }
             let url = sgActionRequestHandlerSanitizer(url)
             if let authContext = authContext, let confirmationCode = parseConfirmationCodeUrl(sharedContext: sharedContext, url: url) {
                 authContext.rootController.applyConfirmationCode(confirmationCode)

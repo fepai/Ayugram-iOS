@@ -328,13 +328,5 @@ public extension TelegramEngine {
         public func updateAdMessagesEnabled(enabled: Bool) -> Signal<Never, AdMessagesEnableError> {
             return _internal_updateAdMessagesEnabled(account: self.account, enabled: enabled)
         }
-
-        public func ayuRegisterWebPush(subscription: String) -> Signal<String?, NoError> {
-            return _internal_ayuRegisterWebPush(account: self.account, subscription: subscription)
-        }
-
-        public func ayuUnregisterWebPush(subscription: String) -> Signal<Void, NoError> {
-            return _internal_ayuUnregisterWebPush(account: self.account, subscription: subscription)
-        }
     }
 }
