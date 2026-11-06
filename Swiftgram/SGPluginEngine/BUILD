@@ -11,8 +11,5 @@ swift_library(
         "//submodules/Postbox:Postbox",
         "//submodules/TelegramCore:TelegramCore",
     ],
-    sdk_frameworks = [
-        "JavaScriptCore",
-    ],
     visibility = ["//visibility:public"],
 )
