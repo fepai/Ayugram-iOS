@@ -13,8 +13,5 @@ func ayuPreparePluginCommands(account: Account, peerId: PeerId, messages: [(Bool
     guard let handler = _ayuPluginProcessOutgoing else {
         return .single(messages)
     }
-    return Signal { subscriber in
-        subscriber.putNext(handler(account, peerId, messages))
-        subscriber.putCompletion()
-    }
+    return .single(handler(account, peerId, messages))
 }
