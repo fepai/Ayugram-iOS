@@ -127,7 +127,7 @@ public func ayuGramMarkEditorScreen(context: AccountContext, kind: AyuMarkKind) 
         store(defaultValue)
     })
 
-    let signal = combineLatest(context.sharedContext.presentationData, textPromise)
+    let signal = combineLatest(context.sharedContext.presentationData, textPromise.get())
     |> deliverOnMainQueue
     |> map { data, text -> (ItemListControllerState, (ItemListNodeState, Arguments)) in
         var entries: [Entry] = []

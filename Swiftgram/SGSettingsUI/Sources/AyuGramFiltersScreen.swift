@@ -243,7 +243,7 @@ public func ayuGramFilterEditorScreen(context: AccountContext, filter: AyuGramMe
         AyuGramFilters.shared.update(enabled: true, filters: filters)
     }
 
-    let signal = combineLatest(context.sharedContext.presentationData, patternPromise, enabledPromise)
+    let signal = combineLatest(context.sharedContext.presentationData, patternPromise.get(), enabledPromise.get())
     |> deliverOnMainQueue
     |> map { data, pattern, enabled -> (ItemListControllerState, (ItemListNodeState, Arguments)) in
         var entries: [Entry] = []
