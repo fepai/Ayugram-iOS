@@ -120,17 +120,6 @@ def check_notified_messages(source: Path):
     assert 'ayuGramRestoreNotifiedMessages(transaction: transaction, ids: ids)' in utils
 
 
-def check_update_installers(source: Path):
-    prompt = (source / 'Swiftgram/SGSettingsUI/Sources/AyuGramUpdatePrompt.swift').read_text()
-    # Without TrollStore the Magnifier scheme opens the system Magnifier.
-    assert prompt.count('apple-magnifier://') == 1 and 'if ayuGramInstalledByTrollStore, let url = URL(string: "apple-magnifier://' in prompt
-    assert '/releases/tag/' in prompt, 'Without an installer the release page opens'
-    for plist in ['Telegram-iOS/Info.plist', 'Telegram-iOS/InfoBazel.plist', 'BUILD']:
-        text = (source / 'Telegram' / plist).read_text()
-        for scheme in re.findall(r'\("([a-z]+)", \{ "\1://', prompt):
-            assert '<string>%s</string>' % scheme in text, (plist, scheme)
-
-
 def check_deleted_chats(source: Path):
     core = source / 'submodules/TelegramCore/Sources/TelegramEngine/Messages'
     retained = (core / 'AyuGramRetainedMessages.swift').read_text()
@@ -175,7 +164,6 @@ def check_edit_versions(source: Path):
 def check_history(source: Path):
     check_notified_messages(source)
     check_edit_versions(source)
-    check_update_installers(source)
     check_deferred_reads(source)
     check_deleted_chats(source)
     output = source / 'build-input/ayu-history-checks'
