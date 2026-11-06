@@ -467,3 +467,31 @@
 "Ayu.CopyId" = "Копировать ID";
 "Ayu.CopyMessageId" = "Копировать ID сообщения";
 "Ayu.CopyPeerId" = "Копировать ID чата";
+
+// AyuGram: внешний вид, жесты, плагины
+"Ayu.AppearanceSection" = "Внешний вид";
+"Ayu.AppIcon" = "Иконка приложения";
+"Ayu.AppBadge" = "Бейдж приложения";
+"Ayu.SnowToggle" = "Эффект снега";
+"Ayu.MarksSection" = "Метки сообщений";
+"Ayu.GesturesSection" = "Жесты";
+"Ayu.DoubleTapTitle" = "Двойной тап по сообщению";
+"Ayu.DoubleTapStandard" = "Стандартно";
+"Ayu.DoubleTapReact" = "Реакция с эмодзи";
+"Ayu.DoubleTapCopy" = "Копировать текст";
+"Ayu.DoubleTapReaction" = "Реакция";
+"Ayu.DoubleTapEmojiTitle" = "Эмодзи реакции";
+"Ayu.PluginsSection" = "Плагины";
+"Ayu.AdvancedSection" = "Дополнительно";
+"Ayu.PluginAdd" = "Установить из файла";
+"Ayu.PluginsFooter" = "JavaScript-плагины, устанавливаемые из файлов. Умеют добавлять команды (.префикс), изменять исходящие сообщения и пункты меню сообщения. Android-плагины (Python) видны, но не работают на iOS.";
+"Ayu.PluginVersion" = "Версия:";
+"Ayu.PluginAuthor" = "Автор:";
+"Ayu.PluginInfoHeader" = "О ПЛАГИНЕ";
+"Ayu.PluginSettingsHeader" = "НАСТРОЙКИ";
+"Ayu.PluginDelete" = "Удалить плагин";
+"Ayu.PluginDeleteInfo" = "Плагин и его настройки будут удалены с этого устройства.";
+"Ayu.PluginInstalled" = "Плагин %@ установлен.";
+"Ayu.PluginInstalledAndroid" = "Плагин импортирован, но Android-плагины (Python) не работают на iOS.";
+"Ayu.PluginInstallFailed" = "Ошибка установки";
+"Ayu.PluginAndroidNote" = "Это Android-плагин (Python) — он не может работать на iOS.";

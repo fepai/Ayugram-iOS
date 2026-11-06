@@ -194,6 +194,15 @@ public struct AyuGramExtraSettings: Codable, Equatable {
     public var saveInPrivateGroups = true
     public var saveInPublicChannels = true
     public var saveInPrivateChannels = true
+    // Appearance and gesture customization (exteraGram-inspired).
+    /// Snow particles over the chat list.
+    public var snowEnabled = false
+    /// Hide the chat list search bar.
+    public var hideChatListSearch = false
+    /// Double tap on a message: 0 = standard, 1 = react with an emoji, 2 = copy text.
+    public var doubleTapAction: Int32 = 0
+    /// The reaction emoji used by the double tap action.
+    public var doubleTapEmoji = "❤️"
 
     public var sendsSilently: Bool {
         return silentSending == 2 || (silentSending == 1 && AyuGramSettings.shared.snapshot.ghostMode)
@@ -228,6 +237,10 @@ public struct AyuGramExtraSettings: Codable, Equatable {
         self.saveInPrivateGroups = try container.decodeIfPresent(Bool.self, forKey: .saveInPrivateGroups) ?? defaults.saveInPrivateGroups
         self.saveInPublicChannels = try container.decodeIfPresent(Bool.self, forKey: .saveInPublicChannels) ?? defaults.saveInPublicChannels
         self.saveInPrivateChannels = try container.decodeIfPresent(Bool.self, forKey: .saveInPrivateChannels) ?? defaults.saveInPrivateChannels
+        self.snowEnabled = try container.decodeIfPresent(Bool.self, forKey: .snowEnabled) ?? defaults.snowEnabled
+        self.hideChatListSearch = try container.decodeIfPresent(Bool.self, forKey: .hideChatListSearch) ?? defaults.hideChatListSearch
+        self.doubleTapAction = try container.decodeIfPresent(Int32.self, forKey: .doubleTapAction) ?? defaults.doubleTapAction
+        self.doubleTapEmoji = try container.decodeIfPresent(String.self, forKey: .doubleTapEmoji) ?? defaults.doubleTapEmoji
     }
 }
 

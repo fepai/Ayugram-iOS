@@ -4,6 +4,7 @@ import SGIAP
 import SGAPI
 import SGDeviceToken
 import SGAPIToken
+import SGPluginEngine
 
 import SGActionRequestHandlerSanitizer
 import SGGHSettings
@@ -1491,6 +1492,9 @@ private func extractAccountManagerState(records: AccountRecordsView<TelegramAcco
                         print("Application: context took \(readyTime) to become ready")
                     }
                     print("Launch to ready took \((CFAbsoluteTimeGetCurrent() - launchStartTime) * 1000.0) ms")
+
+                    // AyuGram: load the JavaScript plugins once the account is ready.
+                    AyuPluginRuntime.shared.activate(account: context.context.account)
 
                     self.mainWindow.debugAction = nil
                     self.mainWindow.viewController = context.rootController

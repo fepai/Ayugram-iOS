@@ -472,3 +472,31 @@
 "Ayu.CopyId" = "Copy ID";
 "Ayu.CopyMessageId" = "Copy Message ID";
 "Ayu.CopyPeerId" = "Copy Peer ID";
+
+// AyuGram: appearance, gestures, plugins
+"Ayu.AppearanceSection" = "Appearance";
+"Ayu.AppIcon" = "App Icon";
+"Ayu.AppBadge" = "App Badge";
+"Ayu.SnowToggle" = "Snow effect";
+"Ayu.MarksSection" = "Message marks";
+"Ayu.GesturesSection" = "Gestures";
+"Ayu.DoubleTapTitle" = "Double tap on message";
+"Ayu.DoubleTapStandard" = "Standard";
+"Ayu.DoubleTapReact" = "React with emoji";
+"Ayu.DoubleTapCopy" = "Copy text";
+"Ayu.DoubleTapReaction" = "Reaction";
+"Ayu.DoubleTapEmojiTitle" = "Reaction emoji";
+"Ayu.PluginsSection" = "Plugins";
+"Ayu.AdvancedSection" = "Advanced";
+"Ayu.PluginAdd" = "Install from file";
+"Ayu.PluginsFooter" = "JavaScript plugins installed from files. They can add commands (.prefix), rewrite outgoing messages and add message menu items. Android (Python) plugins are shown but cannot run on iOS.";
+"Ayu.PluginVersion" = "Version:";
+"Ayu.PluginAuthor" = "Author:";
+"Ayu.PluginInfoHeader" = "ABOUT";
+"Ayu.PluginSettingsHeader" = "SETTINGS";
+"Ayu.PluginDelete" = "Delete Plugin";
+"Ayu.PluginDeleteInfo" = "The plugin and its settings will be removed from this device.";
+"Ayu.PluginInstalled" = "Plugin %@ installed.";
+"Ayu.PluginInstalledAndroid" = "The plugin was imported, but Android (Python) plugins cannot run on iOS.";
+"Ayu.PluginInstallFailed" = "Install failed";
+"Ayu.PluginAndroidNote" = "This is an Android (Python) plugin — it cannot run on iOS.";

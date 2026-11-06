@@ -1,6 +1,7 @@
 import SGSettingsUI
 import SGStrings
 import SGSimpleSettings
+import SGPluginEngine
 import PeerInfoUI
 import Foundation
 import UIKit
@@ -1116,6 +1117,19 @@ func contextMenuForChatPresentationInterfaceState(chatPresentationInterfaceState
                 ])
                 controllerInteraction.presentControllerInCurrent(sheet, nil)
             })))
+        }
+        // AyuGram: items registered by installed plugins.
+        if messages.count == 1, message.id.namespace == Namespaces.Message.Cloud {
+            for pluginItem in AyuPluginRuntime.shared.messageMenuItems() {
+                let handler = pluginItem.handler
+                let title = "[\(pluginItem.pluginName)] \(pluginItem.title)"
+                actions.append(.action(ContextMenuActionItem(text: title, icon: { theme in
+                    generateTintedImage(image: UIImage(systemName: "puzzlepiece.extension"), color: theme.actionSheet.primaryTextColor)
+                }, action: { _, f in
+                    f(.default)
+                    AyuPluginRuntime.shared.runMessageMenuItem(handler, message: message)
+                })))
+            }
         }
         var sgActions: [ContextMenuItem] = []
 

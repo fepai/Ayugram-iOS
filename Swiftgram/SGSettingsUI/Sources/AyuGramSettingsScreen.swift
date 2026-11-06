@@ -13,7 +13,7 @@ import SGSimpleSettings
 import SGStrings
 
 private enum AyuScreenSection: Int32 {
-    case hero, ghost, spy, chats, useful, customization, content, transfer, client, support, database
+    case hero, ghost, spy, appearance, chats, plugins, advanced, database
 }
 
 private enum AyuScreenToggle: Equatable {
@@ -25,7 +25,7 @@ private enum AyuScreenToggle: Equatable {
 }
 
 private enum AyuScreenLink: Equatable {
-    case history, savingPreferences, filters, deletedMark, editedMark, appearance, importChat, silentSending
+    case history, savingPreferences, filters, deletedMark, editedMark, appearance, importChat, silentSending, plugins
 }
 
 private enum AyuScreenTint: Equatable {
@@ -143,7 +143,7 @@ private func ayuGramArchiveSize(mediaBox: MediaBox) -> String {
     return ByteCountFormatter.string(fromByteCount: total, countStyle: .file)
 }
 
-private func ayuScreenEntries(data: PresentationData, privacy: AyuGramPrivacySettings, extra: AyuGramExtraSettings, client: AyuGramClientSettings, hasAppearance: Bool, archiveSize: String) -> [AyuScreenEntry] {
+private func ayuScreenEntries(data: PresentationData, privacy: AyuGramPrivacySettings, extra: AyuGramExtraSettings, client: AyuGramClientSettings, archiveSize: String) -> [AyuScreenEntry] {
     let locale = data.strings.baseLanguageCode
     func s(_ key: String) -> String {
         return i18n(key, locale)
@@ -155,72 +155,61 @@ private func ayuScreenEntries(data: PresentationData, privacy: AyuGramPrivacySet
     let hiddenCount = hidden.filter { $0 }.count
     entries.append(.hero(id: 0, title: "AyuGram", status: s(ghost ? "Ayu.HeroGhostOn" : "Ayu.HeroGhostOff"), detail: i18n("Ayu.HeroHidden", locale, "\(hiddenCount)", "\(hidden.count)"), active: ghost || hiddenCount > 0))
 
-    // Ghost essentials (AyuGram Android: the collapsible Ghost Mode block).
+    // Ghost essentials.
     entries.append(.header(id: 100, section: .ghost, text: s("Ayu.GhostEssentials")))
-    entries.append(.toggle(id: 110, section: .ghost, key: .ghost, symbol: "eye.slash.fill", tint: .purple, title: s("Ayu.Ghost"), subtitle: s("Ayu.GhostSubtitle"), value: ghost, enabled: true))
-    entries.append(.toggle(id: 115, section: .ghost, key: .read, symbol: "checkmark.circle.fill", tint: .blue, title: s("Ayu.HideRead"), subtitle: nil, value: privacy.suppressRead, enabled: !ghost))
-    entries.append(.toggle(id: 120, section: .ghost, key: .online, symbol: "wifi.slash", tint: .green, title: s("Ayu.HideOnline"), subtitle: nil, value: privacy.suppressOnline, enabled: !ghost))
+    entries.append(.toggle(id: 110, section: .ghost, key: .ghost, symbol: "eye.slash.fill", tint: .teal, title: s("Ayu.Ghost"), subtitle: s("Ayu.GhostSubtitle"), value: ghost, enabled: true))
+    entries.append(.toggle(id: 115, section: .ghost, key: .read, symbol: "checkmark.circle.fill", tint: .indigo, title: s("Ayu.HideRead"), subtitle: nil, value: privacy.suppressRead, enabled: !ghost))
+    entries.append(.toggle(id: 120, section: .ghost, key: .online, symbol: "wifi.slash", tint: .blue, title: s("Ayu.HideOnline"), subtitle: nil, value: privacy.suppressOnline, enabled: !ghost))
     entries.append(.toggle(id: 125, section: .ghost, key: .typing, symbol: "keyboard", tint: .teal, title: s("Ayu.HideTyping"), subtitle: nil, value: privacy.suppressTyping, enabled: !ghost))
-    entries.append(.toggle(id: 130, section: .ghost, key: .recording, symbol: "mic.slash.fill", tint: .red, title: s("Ayu.HideRecording"), subtitle: nil, value: privacy.suppressRecording, enabled: !ghost))
+    entries.append(.toggle(id: 130, section: .ghost, key: .recording, symbol: "mic.slash.fill", tint: .lavender, title: s("Ayu.HideRecording"), subtitle: nil, value: privacy.suppressRecording, enabled: !ghost))
     entries.append(.toggle(id: 135, section: .ghost, key: .uploading, symbol: "icloud.and.arrow.up.fill", tint: .indigo, title: s("Ayu.HideUploading"), subtitle: nil, value: privacy.suppressUploading, enabled: !ghost))
-    entries.append(.toggle(id: 140, section: .ghost, key: .stories, symbol: "camera.circle.fill", tint: .pink, title: s("Ayu.HideStories"), subtitle: nil, value: privacy.suppressStoryViews, enabled: !ghost))
+    entries.append(.toggle(id: 140, section: .ghost, key: .stories, symbol: "camera.circle.fill", tint: .blue, title: s("Ayu.HideStories"), subtitle: nil, value: privacy.suppressStoryViews, enabled: !ghost))
     entries.append(.toggle(id: 145, section: .ghost, key: .offlineAfterOnline, symbol: "bolt.badge.clock.fill", tint: .orange, title: s("Ayu.OfflineAfterOnline"), subtitle: s("Ayu.OfflineAfterOnlineInfo"), value: extra.offlineAfterOnline, enabled: true))
-    entries.append(.toggle(id: 150, section: .ghost, key: .readOnSend, symbol: "arrowshape.turn.up.left.fill", tint: .blue, title: s("Ayu.ReadOnSend"), subtitle: s("Ayu.ReadOnSendInfo"), value: extra.readOnSend, enabled: true))
-    entries.append(.toggle(id: 152, section: .ghost, key: .confirmRead, symbol: "checkmark.bubble.fill", tint: .blue, title: s("Ayu.ConfirmReadReceipt"), subtitle: nil, value: extra.confirmReadReceipt, enabled: true))
-    entries.append(.toggle(id: 155, section: .ghost, key: .scheduleInGhost, symbol: "clock.badge.checkmark.fill", tint: .teal, title: s("Ayu.ScheduleInGhost"), subtitle: s("Ayu.ScheduleInGhostInfo"), value: extra.scheduleInGhost, enabled: true))
+    entries.append(.toggle(id: 150, section: .ghost, key: .readOnSend, symbol: "arrowshape.turn.up.left.fill", tint: .indigo, title: s("Ayu.ReadOnSend"), subtitle: s("Ayu.ReadOnSendInfo"), value: extra.readOnSend, enabled: true))
+    entries.append(.toggle(id: 152, section: .ghost, key: .confirmRead, symbol: "checkmark.bubble.fill", tint: .teal, title: s("Ayu.ConfirmReadReceipt"), subtitle: nil, value: extra.confirmReadReceipt, enabled: true))
+    entries.append(.toggle(id: 155, section: .ghost, key: .scheduleInGhost, symbol: "clock.badge.checkmark.fill", tint: .lavender, title: s("Ayu.ScheduleInGhost"), subtitle: s("Ayu.ScheduleInGhostInfo"), value: extra.scheduleInGhost, enabled: true))
     let silentLabels = ["Ayu.SilentNever", "Ayu.SilentInGhost", "Ayu.SilentAlways"]
     entries.append(.link(id: 157, section: .ghost, link: .silentSending, symbol: "bell.slash.fill", tint: .gray, title: s("Ayu.SilentSending"), label: s(silentLabels[Int(max(0, min(2, extra.silentSending)))])))
     entries.append(.footer(id: 160, section: .ghost, text: s("Ayu.GhostFooter")))
 
-    // Spy essentials (AyuGram Android: saved deleted and edited messages).
+    // Spy essentials.
     entries.append(.header(id: 200, section: .spy, text: s("Ayu.SpyEssentials")))
     entries.append(.toggle(id: 210, section: .spy, key: .history, symbol: "trash.fill", tint: .red, title: s("Ayu.SaveDeleted"), subtitle: s("Ayu.SaveDeletedInfo"), value: privacy.messageHistory, enabled: true))
     entries.append(.link(id: 215, section: .spy, link: .history, symbol: "clock.fill", tint: .teal, title: s("Ayu.OpenHistory"), label: ""))
     entries.append(.link(id: 220, section: .spy, link: .savingPreferences, symbol: "tray.full.fill", tint: .indigo, title: s("Ayu.SavingPreferences"), label: ""))
     entries.append(.footer(id: 230, section: .spy, text: s("Ayu.SavingFooterShort")))
 
-    // Chats.
-    entries.append(.header(id: 300, section: .chats, text: s("Ayu.ChatsSection")))
-    entries.append(.toggle(id: 310, section: .chats, key: .disableAds, symbol: "megaphone.fill", tint: .orange, title: s("Ayu.DisableAds"), subtitle: nil, value: extra.disableAds, enabled: true))
-    entries.append(.toggle(id: 315, section: .chats, key: .disableLinkWarning, symbol: "link", tint: .blue, title: s("Ayu.DisableLinkWarning"), subtitle: nil, value: extra.disableLinkWarning, enabled: true))
-    entries.append(.toggle(id: 320, section: .chats, key: .disableGreeting, symbol: "hand.wave.fill", tint: .green, title: s("Ayu.DisableGreeting"), subtitle: nil, value: extra.disableGreetingSticker, enabled: true))
-    entries.append(.toggle(id: 325, section: .chats, key: .dimDeleted, symbol: "circle.lefthalf.filled", tint: .red, title: s("Ayu.DimDeleted"), subtitle: nil, value: extra.dimDeletedMessages, enabled: true))
-    entries.append(.toggle(id: 330, section: .chats, key: .hideBlocked, symbol: "person.slash.fill", tint: .red, title: s("Ayu.HideBlocked"), subtitle: s("Ayu.HideBlockedInfo"), value: extra.hideBlockedMessages, enabled: true))
-    entries.append(.toggle(id: 335, section: .chats, key: .repeatMessage, symbol: "arrow.2.squarepath", tint: .indigo, title: s("Ayu.RepeatMessage"), subtitle: nil, value: extra.repeatMessage, enabled: true))
-    entries.append(.toggle(id: 340, section: .chats, key: .confirmStickers, symbol: "face.smiling.inverse", tint: .pink, title: s("Ayu.ConfirmStickers"), subtitle: nil, value: extra.confirmStickers, enabled: true))
-    entries.append(.toggle(id: 345, section: .chats, key: .confirmGifs, symbol: "play.rectangle.fill", tint: .purple, title: s("Ayu.ConfirmGifs"), subtitle: nil, value: extra.confirmGifs, enabled: true))
-    entries.append(.footer(id: 350, section: .chats, text: s("Ayu.LocalOnly")))
+    // Appearance.
+    entries.append(.link(id: 300, section: .appearance, link: .appearance, symbol: "paintpalette.fill", tint: .lavender, title: s("Ayu.AppearanceSection"), label: ""))
 
-    // Useful features (AyuGram Android section).
-    entries.append(.header(id: 400, section: .useful, text: s("Ayu.UsefulSection")))
+    // Chats & content.
+    entries.append(.header(id: 400, section: .chats, text: s("Ayu.ChatsSection")))
+    entries.append(.toggle(id: 405, section: .chats, key: .ignoreProtection, symbol: "lock.open.fill", tint: .orange, title: s("Ayu.IgnoreProtection"), subtitle: s("Ayu.IgnoreProtectionInfo"), value: extra.ignoreCopyProtection, enabled: true))
+    entries.append(.toggle(id: 410, section: .chats, key: .screenshots, symbol: "camera.fill", tint: .gray, title: s("Ayu.AllowScreenshots"), subtitle: s("Ayu.AllowScreenshotsInfo"), value: extra.allowScreenshots, enabled: true))
+    entries.append(.toggle(id: 415, section: .chats, key: .disableAds, symbol: "megaphone.fill", tint: .orange, title: s("Ayu.DisableAds"), subtitle: nil, value: extra.disableAds, enabled: true))
+    entries.append(.toggle(id: 420, section: .chats, key: .disableLinkWarning, symbol: "link", tint: .indigo, title: s("Ayu.DisableLinkWarning"), subtitle: nil, value: extra.disableLinkWarning, enabled: true))
+    entries.append(.toggle(id: 425, section: .chats, key: .disableGreeting, symbol: "hand.wave.fill", tint: .teal, title: s("Ayu.DisableGreeting"), subtitle: nil, value: extra.disableGreetingSticker, enabled: true))
+    entries.append(.toggle(id: 430, section: .chats, key: .dimDeleted, symbol: "circle.lefthalf.filled", tint: .red, title: s("Ayu.DimDeleted"), subtitle: nil, value: extra.dimDeletedMessages, enabled: true))
+    entries.append(.toggle(id: 435, section: .chats, key: .hideBlocked, symbol: "person.slash.fill", tint: .red, title: s("Ayu.HideBlocked"), subtitle: s("Ayu.HideBlockedInfo"), value: extra.hideBlockedMessages, enabled: true))
+    entries.append(.toggle(id: 440, section: .chats, key: .repeatMessage, symbol: "arrow.2.squarepath", tint: .indigo, title: s("Ayu.RepeatMessage"), subtitle: nil, value: extra.repeatMessage, enabled: true))
+    entries.append(.toggle(id: 445, section: .chats, key: .confirmStickers, symbol: "face.smiling.inverse", tint: .lavender, title: s("Ayu.ConfirmStickers"), subtitle: nil, value: extra.confirmStickers, enabled: true))
+    entries.append(.toggle(id: 450, section: .chats, key: .confirmGifs, symbol: "play.rectangle.fill", tint: .blue, title: s("Ayu.ConfirmGifs"), subtitle: nil, value: extra.confirmGifs, enabled: true))
+    entries.append(.footer(id: 455, section: .chats, text: s("Ayu.ContentFooter")))
+
+    // Plugins.
+    entries.append(.link(id: 500, section: .plugins, link: .plugins, symbol: "puzzlepiece.extension.fill", tint: .teal, title: s("Ayu.PluginsSection"), label: ""))
+
+    // Advanced.
+    entries.append(.header(id: 600, section: .advanced, text: s("Ayu.AdvancedSection")))
     let filterCount = AyuGramFilters.shared.activeCount
-    entries.append(.link(id: 410, section: .useful, link: .filters, symbol: "line.3.horizontal.decrease.circle.fill", tint: .teal, title: s("Ayu.FiltersTitle"), label: filterCount > 0 ? i18n("Ayu.FiltersCount", locale, "\(filterCount)") : s("Ayu.FilterOff")))
-    entries.append(.toggle(id: 430, section: .useful, key: .premium, symbol: "star.fill", tint: .purple, title: s("Ayu.LocalPremium"), subtitle: s("Ayu.LocalPremiumInfo"), value: client.localPremium, enabled: true))
+    entries.append(.link(id: 605, section: .advanced, link: .filters, symbol: "line.3.horizontal.decrease.circle.fill", tint: .teal, title: s("Ayu.FiltersTitle"), label: filterCount > 0 ? i18n("Ayu.FiltersCount", locale, "\(filterCount)") : s("Ayu.FilterOff")))
+    entries.append(.toggle(id: 610, section: .advanced, key: .premium, symbol: "star.fill", tint: .lavender, title: s("Ayu.LocalPremium"), subtitle: s("Ayu.LocalPremiumInfo"), value: client.localPremium, enabled: true))
+    entries.append(.link(id: 615, section: .advanced, link: .importChat, symbol: "square.and.arrow.down.fill", tint: .indigo, title: s("Ayu.ImportChat"), label: ""))
+    entries.append(.pins(id: 620, section: .advanced, value: client.pinnedChatLimit))
+    entries.append(.footer(id: 625, section: .advanced, text: s("Ayu.PinsFooter")))
 
-    // Customization (AyuGram Android section).
-    entries.append(.header(id: 500, section: .customization, text: s("Ayu.CustomizationSection")))
-    entries.append(.link(id: 510, section: .customization, link: .deletedMark, symbol: "eraser.fill", tint: .orange, title: s("Ayu.DeletedMark"), label: extra.deletedMark.isEmpty ? "🧹" : extra.deletedMark))
-    entries.append(.link(id: 520, section: .customization, link: .editedMark, symbol: "pencil.line", tint: .blue, title: s("Ayu.EditedMark"), label: extra.editedMark.isEmpty ? s("Ayu.EditedMarkNative") : extra.editedMark))
-    entries.append(.toggle(id: 530, section: .customization, key: .quickToggle, symbol: "hand.tap.fill", tint: .orange, title: s("Ayu.QuickToggle"), subtitle: s("Ayu.QuickToggleInfo"), value: extra.ghostQuickToggle, enabled: true))
-
-    // Content protection.
-    entries.append(.header(id: 600, section: .content, text: s("Ayu.ContentSection")))
-    entries.append(.toggle(id: 610, section: .content, key: .ignoreProtection, symbol: "lock.open.fill", tint: .orange, title: s("Ayu.IgnoreProtection"), subtitle: s("Ayu.IgnoreProtectionInfo"), value: extra.ignoreCopyProtection, enabled: true))
-    entries.append(.toggle(id: 620, section: .content, key: .screenshots, symbol: "camera.fill", tint: .gray, title: s("Ayu.AllowScreenshots"), subtitle: s("Ayu.AllowScreenshotsInfo"), value: extra.allowScreenshots, enabled: true))
-    entries.append(.footer(id: 630, section: .content, text: s("Ayu.ContentFooter")))
-
-    // Chat transfer.
-    entries.append(.header(id: 700, section: .transfer, text: s("Ayu.ChatTransferSection")))
-    entries.append(.link(id: 710, section: .transfer, link: .importChat, symbol: "square.and.arrow.down.fill", tint: .green, title: s("Ayu.ImportChat"), label: ""))
-    entries.append(.footer(id: 720, section: .transfer, text: s("Ayu.ImportChatFooter")))
-
-    // Client.
-    entries.append(.header(id: 800, section: .client, text: s("Ayu.ClientSection")))
-    entries.append(.pins(id: 810, section: .client, value: client.pinnedChatLimit))
-    entries.append(.footer(id: 820, section: .client, text: s("Ayu.PinsFooter")))
-
-    // Database (AyuGram Android: the red rows with the trash icon at the bottom).
-    entries.append(.destructive(id: 960, section: .database, title: s("Ayu.ClearDatabase"), label: archiveSize))
+    // Database.
+    entries.append(.destructive(id: 900, section: .database, title: s("Ayu.ClearDatabase"), label: archiveSize))
     return entries
 }
 
@@ -274,9 +263,9 @@ public func ayuGramSettingsScreen(context: AccountContext) -> ViewController {
         case .editedMark:
             pushController?(ayuGramMarkEditorScreen(context: context, kind: .edited))
         case .appearance:
-            if let controller = ayuGramAppearanceEntryController(context: context) {
-                pushController?(controller)
-            }
+            pushController?(ayuGramAppearanceScreen(context: context))
+        case .plugins:
+            pushController?(ayuGramPluginsScreen(context: context))
         case .importChat:
             ayuGramImportChat(context: context)
         case .silentSending:
@@ -312,12 +301,11 @@ public func ayuGramSettingsScreen(context: AccountContext) -> ViewController {
             })
         ]))
     })
-    let hasAppearance = ayuGramHasAppearanceEntry
     let signal = combineLatest(context.sharedContext.presentationData, ayuSettingsChangeSignal())
     |> deliverOnMainQueue
     |> map { data, _ -> (ItemListControllerState, (ItemListNodeState, AyuScreenArguments)) in
         let settings = AyuGramSettings.shared
-        let entries = ayuScreenEntries(data: data, privacy: settings.snapshot, extra: settings.extra, client: settings.client, hasAppearance: hasAppearance, archiveSize: ayuGramArchiveSize(mediaBox: context.account.postbox.mediaBox))
+        let entries = ayuScreenEntries(data: data, privacy: settings.snapshot, extra: settings.extra, client: settings.client, archiveSize: ayuGramArchiveSize(mediaBox: context.account.postbox.mediaBox))
         let state = ItemListControllerState(presentationData: ItemListPresentationData(data), title: .text("AyuGram"), leftNavigationButton: nil, rightNavigationButton: nil, backNavigationButton: ItemListBackButton(title: data.strings.Common_Back))
         let listState = ItemListNodeState(presentationData: ItemListPresentationData(data), entries: entries, style: .blocks, animateChanges: true)
         return (state, (listState, arguments))

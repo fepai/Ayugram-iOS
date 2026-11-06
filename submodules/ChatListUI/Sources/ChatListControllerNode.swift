@@ -1907,6 +1907,9 @@ final class ChatListControllerNode: ASDisplayNode, ASGestureRecognizerDelegate {
         
         self.containerLayout = (layout, navigationBarHeight, visualNavigationHeight, cleanNavigationBarHeight, storiesInset)
 
+        // AyuGram: exteraGram-style snow effect over the chat list.
+        ayuUpdateSnowOverlay(on: self)
+
         // MARK: Swiftgram
         let sgComponentTransition = ComponentTransition(transition)
         let sgDisplayTabsAtBottom = self.controller?.tabContainerData?.1 ?? false

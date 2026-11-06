@@ -19,6 +19,7 @@ swift_library(
         "//Swiftgram/SGItemListUI:SGItemListUI",
         "//Swiftgram/SGLogging:SGLogging",
         "//Swiftgram/SGSimpleSettings:SGSimpleSettings",
+        "//Swiftgram/SGPluginEngine:SGPluginEngine",
         "//Swiftgram/SGStrings:SGStrings",
 #        "//Swiftgram/SGAPI:SGAPI",
         "//Swiftgram/SGAPIToken:SGAPIToken",
@@ -44,6 +45,7 @@ swift_library(
         "//third-party/ZipArchive:ZipArchive",
         "//submodules/ManagedFile:ManagedFile",
         "//submodules/TelegramUI/Components/SaveProgressScreen:SaveProgressScreen",
+        "//submodules/SettingsUI:SettingsUI",
     ],
     visibility = [
         "//visibility:public",
